@@ -139,6 +139,20 @@ The em dash existed long before large language models, and a dash is not an AI d
 
 No model. No magic. Just punctuation.
 
-## License
+## License and attribution
 
-MIT. See [LICENSE](LICENSE).
+EmDashify is licensed under the **BSD 3-Clause Attribution License**
+(SPDX: `BSD-3-Clause-Attribution`). See [LICENSE](LICENSE).
+
+You may use, modify, and redistribute EmDashify, including in commercial
+projects, under the conditions in the license. When you **redistribute**
+EmDashify in source or binary form, including as part of another product, you
+must retain the following acknowledgment:
+
+> This product includes software developed by edujbarrios
+> (https://github.com/edujbarrios/EmDashify).
+
+An acknowledgments page, third-party notices file, or distributed
+documentation is an appropriate place for the credit. Preserve the license
+and copyright notices as well. **Private use without redistribution does not
+trigger a public attribution requirement.**
