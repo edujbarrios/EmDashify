@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "emdashify"
+version = "0.1.0"
+description = "Turn two hyphens into an em dash. Safely, predictably, and without AI."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{ name = "edujbarrios" }]
+keywords = ["em dash", "typography", "text", "markdown", "cli", "unicode", "ai writing"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Text Processing",
+    "Topic :: Text Processing :: Markup :: Markdown",
+    "Topic :: Utilities",
+]
+
+[project.urls]
+Homepage = "https://github.com/edujbarrios/EmDashify"
+Repository = "https://github.com/edujbarrios/EmDashify"
+Issues = "https://github.com/edujbarrios/EmDashify/issues"
+
+[project.scripts]
+emdashify = "emdashify.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+emdashify = ["py.typed"]
