@@ -4,6 +4,8 @@ All notable changes to this project will be documented here.
 
 ## [0.1.0] - Unreleased
 
+- Replace the MIT license with BSD-3-Clause-Attribution, requiring an author acknowledgment in redistributions.
+
 - Add `convert`, `check`, and `convert_file` with no runtime dependencies.
 - Convert standalone double hyphens (`--`) to em dashes (`—`).
 - Add optional compact mode for `word--word`.
