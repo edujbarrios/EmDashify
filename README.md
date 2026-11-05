@@ -1,9 +1,9 @@
 # EmDashify — `--` → `—`
 
-[![PyPI](https://img.shields.io/pypi/v/emdashify?label=PyPI&logo=pypi)](https://pypi.org/project/emdashify/)
-[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://pypi.org/project/emdashify/)
-[![Tests](https://github.com/edujbarrios/EmDashify/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/edujbarrios/EmDashify/actions/workflows/tests.yml)
-[![License](https://img.shields.io/badge/license-BSD--3--Clause--Attribution-blue)](LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/emdashify.svg?label=PyPI&logo=pypi)](https://pypi.org/project/emdashify/)
+[![Python](https://img.shields.io/pypi/pyversions/emdashify.svg?label=Python&logo=python)](https://pypi.org/project/emdashify/)
+[![Tests](https://img.shields.io/github/actions/workflow/status/edujbarrios/EmDashify/tests.yml?branch=main&label=tests&logo=githubactions)](https://github.com/edujbarrios/EmDashify/actions/workflows/tests.yml)
+[![License](https://img.shields.io/badge/license-BSD--3--Clause--Attribution-blue)](https://github.com/edujbarrios/EmDashify/blob/main/LICENSE)
 
 **The Python library you think you'll never need—until you use it more than the ones you do.**
 
@@ -56,10 +56,10 @@ emdashify --file notes.md --check
 
 **Safe by default:** only standalone `--` becomes `—`. Flags (`--help`), dates, and `---` stay unchanged; Markdown code blocks are protected. Use `--compact` for `word--word`.
 
-Requires Python 3.10+. For development or publishing, see [release instructions](docs/RELEASING.md).
+Requires Python 3.10+. For development or publishing, see [release instructions](https://github.com/edujbarrios/EmDashify/blob/main/docs/RELEASING.md).
 
 ## License
 
-[BSD-3-Clause-Attribution](LICENSE). Redistributing EmDashify requires retaining license notices and this acknowledgment:
+[BSD-3-Clause-Attribution](https://github.com/edujbarrios/EmDashify/blob/main/LICENSE). Redistributing EmDashify requires retaining license notices and this acknowledgment:
 
 > This product includes software developed by edujbarrios (https://github.com/edujbarrios/EmDashify).
