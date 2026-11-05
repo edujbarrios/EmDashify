@@ -1,6 +1,6 @@
-# EmDashify — `--` → `—`
+# EmDashify — Em Dashes Made Easy
 
-[![PyPI](https://img.shields.io/pypi/v/emdashify.svg?label=PyPI&logo=pypi)](https://pypi.org/project/emdashify/)
+[![PyPI](https://img.shields.io/pypi/v/emdashify.svg)](https://pypi.org/project/emdashify/)
 [![Python](https://img.shields.io/pypi/pyversions/emdashify.svg?label=Python&logo=python)](https://pypi.org/project/emdashify/)
 [![Tests](https://img.shields.io/github/actions/workflow/status/edujbarrios/EmDashify/tests.yml?branch=main&label=tests&logo=githubactions)](https://github.com/edujbarrios/EmDashify/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/license-BSD--3--Clause--Attribution-blue)](https://github.com/edujbarrios/EmDashify/blob/main/LICENSE)
@@ -9,9 +9,9 @@
 
 ## Why?
 
-LLMs made the em dash (`—`) hard to ignore. [Pew Research Center](https://www.pewresearch.org/data-labs/2026/08/20/how-much-of-the-internet-is-written-with-ai/) found that em dashes appeared **about twice as often** in the English-language web text it studied as in 2023. An em dash is not proof of AI authorship; it's ordinary punctuation.
+ChatGPT, Claude, and other large language models often use the em dash (`—`) when answering users. It's become especially noticeable in AI-generated responses: [Pew Research Center](https://www.pewresearch.org/data-labs/2026/08/20/how-much-of-the-internet-is-written-with-ai/) found that em dashes appeared **about twice as often** in the English-language web text it studied as in 2023. Of course, the em dash predates AI—it's ordinary punctuation, not proof that a text was AI-written.
 
-Yet most QWERTY keyboards have a `-` key, **not a dedicated `—` key**. EmDashify turns two easy hyphens into one proper em dash. No AI. Just punctuation.
+Yet most QWERTY keyboards have a `-` key, **not a dedicated `—` key**. EmDashify lets you type `--` and turn it into a proper em dash in text, Markdown, or Word documents. No AI needed. Just punctuation.
 
 ## Quick start
 
@@ -30,7 +30,7 @@ convert("hello--world", compact=True) # 'hello—world'
 
 ## Word documents (.docx)
 
-**New in v0.2.0:** convert an entire Word document, including paragraphs, tables, headers and footers, **without flattening text formatting**. Install the optional Word extra:
+Convert an entire Word document, including paragraphs, tables, headers and footers, **without flattening text formatting**. Install the optional Word extra:
 
 ```bash
 pip install "emdashify[word]"

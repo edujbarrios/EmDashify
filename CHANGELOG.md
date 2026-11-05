@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented here.
 
+## [0.2.1] - 2026-11-05
+
+- Refresh the README title and clarify the em dash's frequent use in ChatGPT, Claude, and other LLM responses.
+- Restore a minimal, standard PyPI version badge link for reliable GitHub Markdown rendering.
+- Keep the Pew Research Center reference and document the QWERTY keyboard motivation more explicitly.
+
 ## [0.2.0] - 2026-11-05
 
 - Add conversion for complete Microsoft Word `.docx` documents, including text in tables, headers, footers, hyperlinks, and accessible text boxes; preserve run formatting.
