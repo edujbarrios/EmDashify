@@ -1,0 +1,66 @@
+name: One-time merged-branch cleanup
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/cleanup-branches.yml
+
+permissions: {}
+
+jobs:
+  prune:
+    if: ${{ startsWith(github.event.head_commit.message, 'chore: clean public repository') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Delete only the enumerated obsolete branches
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          python - <<'PY'
+          import os
+          from urllib.error import HTTPError
+          from urllib.parse import quote
+          from urllib.request import Request, urlopen
+
+          obsolete = [
+                    "chore/attribution-license",
+                    "chore/cleanup-v0.2.0-publisher",
+                    "chore/one-time-pypi-publisher",
+                    "chore/restore-release-publishing",
+                    "docs/first-release-readme",
+                    "docs/minimal-readme",
+                    "docs/restore-pew-and-badges",
+                    "feature/docx-support-v0.2.0",
+                    "feature/initial-package",
+                    "publish/v0.1.0",
+                    "publish/v0.2.0",
+                    "release/prepare-v0.1.0",
+                    "release/readme-pypi-ready",
+                    "chore/public-repo-cleanup"
+          ]
+          headers = {
+              "Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}",
+              "Accept": "application/vnd.github+json",
+              "X-GitHub-Api-Version": "2022-11-28",
+              "User-Agent": "emdashify-branch-housekeeping",
+          }
+          for name in obsolete:
+              if name == "main":
+                  raise RuntimeError("Never delete the default branch")
+              url = (
+                  f"https://api.github.com/repos/{os.environ['GITHUB_REPOSITORY']}"
+                  f"/git/refs/heads/{quote(name, safe='/')}"
+              )
+              try:
+                  with urlopen(Request(url, headers=headers, method="DELETE"), timeout=20) as response:
+                      print(f"Deleted {name}: HTTP {response.status}")
+              except HTTPError as error:
+                  if error.code == 404:
+                      print(f"Already absent: {name}")
+                  else:
+                      raise RuntimeError(f"Could not delete {name}: HTTP {error.code}") from error
+          PY
