@@ -3,15 +3,14 @@ name: Publish to PyPI
 on:
   release:
     types: [published]
-  # One-time initial PyPI upload: creating this exact branch triggers a release run.
-  # Remove this trigger after v0.1.0 is published.
-  create:
 
 permissions: {}
 
 jobs:
   build:
-    if: ${{ github.event_name == 'release' || (github.event_name == 'create' && github.event.ref_type == 'branch' && github.event.ref == 'publish/v0.1.0') }}
+    # v0.1.0 has already been uploaded to PyPI via the one-time branch trigger.
+    # Never attempt to upload that immutable version again.
+    if: ${{ github.event.release.tag_name != 'v0.1.0' }}
     name: Test and build distributions
     runs-on: ubuntu-latest
     permissions:
@@ -29,7 +28,7 @@ jobs:
           python -m unittest discover -s tests -v
       - name: Verify release tag matches package version
         env:
-          RELEASE_TAG: ${{ github.event_name == 'create' && github.event.ref || github.event.release.tag_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
           python - <<'PY'
           import os
@@ -38,7 +37,7 @@ jobs:
           from emdashify import __version__
           project = tomllib.loads(Path('pyproject.toml').read_text(encoding='utf-8'))
           version = project['project']['version']
-          tag = os.environ['RELEASE_TAG'].removeprefix('publish/')
+          tag = os.environ['RELEASE_TAG']
           assert tag == f'v{version}', f'Tag {tag!r} does not match v{version}'
           assert version == __version__, 'pyproject.toml and package __version__ differ'
           PY
