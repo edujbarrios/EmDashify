@@ -18,7 +18,7 @@ Meanwhile, most QWERTY keyboards have a `-` key but **no dedicated `—` key**. 
 pip install emdashify
 ```
 
-Requires Python 3.10+. Until the first PyPI release, install it from a local checkout with `python -m pip install -e .`.
+Requires Python 3.10+. For development, run `python -m pip install -e .` from a local checkout.
 
 ## Usage
 
