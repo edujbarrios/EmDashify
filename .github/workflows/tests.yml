@@ -23,3 +23,24 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Verify entry point
         run: emdashify --version
+
+  package:
+    name: Build and validate PyPI artifacts
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Build wheel and source distribution
+        run: |
+          python -m pip install --upgrade build twine
+          python -m build
+          python -m twine check --strict dist/*
+      - name: Smoke test packaged wheel and optional extra
+        run: |
+          python -m pip install ".[word]"
+          python -m pip install --force-reinstall --no-deps dist/*.whl
+          python -c 'from emdashify import convert, convert_docx, check_docx; assert convert("Hello -- world") == "Hello — world"'
