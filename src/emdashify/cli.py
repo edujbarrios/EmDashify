@@ -21,8 +21,13 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("text", nargs="?", help="Text to convert; read standard input if omitted")
     parser.add_argument("--file", type=Path, metavar="PATH", help="Read a UTF-8 text, Markdown, or Word .docx file")
     parser.add_argument("--output", type=Path, metavar="PATH", help="Write converted text or Word document to a new file")
-    parser.add_argument(
-        "--compact", action="store_true", help="Also convert word--word (letters on each side)"
+    spacing = parser.add_mutually_exclusive_group()
+    spacing.add_argument(
+        "--compact", action="store_true", help="Use compact em dashes (the default)"
+    )
+    spacing.add_argument(
+        "--spaced", action="store_true",
+        help="Use the previous style: preserve spaces and only convert standalone --"
     )
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--markdown", action="store_true", help="Protect Markdown code spans and blocks")
@@ -37,6 +42,7 @@ def main(argv: list[str] | None = None) -> int:
     """Run the CLI; return 0 on success or 1 if --check detects a change."""
     parser = _parser()
     args = parser.parse_args(argv)
+    compact = not args.spaced
     if args.file is not None and args.text is not None:
         parser.error("provide either text or --file, not both")
     if args.output is not None and args.file is None:
@@ -57,13 +63,13 @@ def main(argv: list[str] | None = None) -> int:
             parser.error("Word documents require --output (or use --check)")
         try:
             if args.check:
-                changed = check_docx(args.file, compact=args.compact)
+                changed = check_docx(args.file, compact=compact)
                 print(
                     f"{args.file}: {'changes needed' if changed else 'no changes needed'}",
                     file=sys.stderr,
                 )
                 return 1 if changed else 0
-            convert_docx(args.file, args.output, compact=args.compact)
+            convert_docx(args.file, args.output, compact=compact)
         except (OSError, ValueError, RuntimeError) as exc:
             parser.exit(2, f"emdashify: {exc}\n")
         print(f"Written to {args.output}", file=sys.stderr)
@@ -91,7 +97,7 @@ def main(argv: list[str] | None = None) -> int:
         markdown = False
 
     try:
-        converted = convert(original, compact=args.compact, markdown=markdown)
+        converted = convert(original, compact=compact, markdown=markdown)
     except (TypeError, ValueError) as exc:
         parser.error(str(exc))
 

@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented here.
 
+## [0.3.0] - 2026-11-05
+
+- Make compact em dash typography the default: `word--word` and `word -- word` produce `word—word`.
+- Remove surrounding horizontal spaces around explicit `--` without removing line breaks.
+- Apply the same default to text, Markdown, CLI, and Word `.docx` conversion.
+- Add `--spaced` (CLI) and `compact=False` (Python) to preserve the previous behavior.
+- Extend regression tests for compact conversion, Word formatting, Markdown protection, and spacing.
+
 ## [0.2.1] - 2026-11-05
 
 - Refresh the README title and clarify the em dash's frequent use in ChatGPT, Claude, and other LLM responses.

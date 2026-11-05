@@ -25,15 +25,30 @@ class CLITests(unittest.TestCase):
     def test_literal_text(self) -> None:
         result = self.run_cli("Hello -- world")
         self.assertEqual(result.returncode, 0)
-        self.assertEqual(result.stdout, "Hello — world\n")
+        self.assertEqual(result.stdout, "Hello—world\n")
 
     def test_standard_input(self) -> None:
         result = self.run_cli(stdin="Hello -- world\n")
-        self.assertEqual(result.stdout, "Hello — world\n")
+        self.assertEqual(result.stdout, "Hello—world\n")
 
     def test_compact(self) -> None:
         result = self.run_cli("hello--world", "--compact")
         self.assertEqual(result.stdout, "hello—world\n")
+
+    def test_compact_is_default(self) -> None:
+        result = self.run_cli("hello--world")
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, "hello—world\n")
+
+    def test_spaced_opt_out(self) -> None:
+        result = self.run_cli("Hello -- world", "--spaced")
+        self.assertEqual(result.stdout, "Hello — world\n")
+        result = self.run_cli("hello--world", "--spaced")
+        self.assertEqual(result.stdout, "hello--world\n")
+
+    def test_spaced_compact_conflict(self) -> None:
+        result = self.run_cli("Hello -- world", "--compact", "--spaced")
+        self.assertEqual(result.returncode, 2)
 
     def test_markdown_flag(self) -> None:
         result = self.run_cli("`hello -- world`", "--markdown")
@@ -46,7 +61,7 @@ class CLITests(unittest.TestCase):
         self.assertEqual(result.stdout, "")
 
     def test_check_clean(self) -> None:
-        result = self.run_cli("Hello — world", "--check")
+        result = self.run_cli("Hello—world", "--check")
         self.assertEqual(result.returncode, 0)
         self.assertIn("no changes needed", result.stderr)
 
@@ -54,12 +69,12 @@ class CLITests(unittest.TestCase):
         result = self.run_cli("Hello -- world", "--diff")
         self.assertEqual(result.returncode, 0)
         self.assertIn("-Hello -- world", result.stdout)
-        self.assertIn("+Hello — world", result.stdout)
+        self.assertIn("+Hello—world", result.stdout)
 
     def test_check_with_diff(self) -> None:
         result = self.run_cli("Hello -- world", "--diff", "--check")
         self.assertEqual(result.returncode, 1)
-        self.assertIn("+Hello — world", result.stdout)
+        self.assertIn("+Hello—world", result.stdout)
 
     def test_file_auto_markdown(self) -> None:
         with tempfile.TemporaryDirectory() as root:
@@ -67,7 +82,7 @@ class CLITests(unittest.TestCase):
             source.write_text("Hello -- world\n`echo -- help`\n", encoding="utf-8")
             result = self.run_cli("--file", str(source))
             self.assertEqual(result.returncode, 0)
-            self.assertEqual(result.stdout, "Hello — world\n`echo -- help`\n")
+            self.assertEqual(result.stdout, "Hello—world\n`echo -- help`\n")
 
     def test_output_file(self) -> None:
         with tempfile.TemporaryDirectory() as root:
@@ -77,7 +92,7 @@ class CLITests(unittest.TestCase):
             result = self.run_cli("--file", str(source), "--output", str(target))
             self.assertEqual(result.returncode, 0)
             self.assertEqual(result.stdout, "")
-            self.assertEqual(target.read_text(encoding="utf-8"), "Hello — world")
+            self.assertEqual(target.read_text(encoding="utf-8"), "Hello—world")
             self.assertEqual(source.read_text(encoding="utf-8"), "Hello -- world")
 
     def test_plain_override(self) -> None:
@@ -85,7 +100,7 @@ class CLITests(unittest.TestCase):
             source = Path(root, "notes.md")
             source.write_text("`Hello -- world`", encoding="utf-8")
             result = self.run_cli("--file", str(source), "--plain")
-            self.assertEqual(result.stdout, "`Hello — world`")
+            self.assertEqual(result.stdout, "`Hello—world`")
 
     def test_output_requires_file(self) -> None:
         result = self.run_cli("Hello -- world", "--output", "hello.txt")
@@ -127,7 +142,7 @@ class CLITests(unittest.TestCase):
             self.assertEqual(self.run_cli("--file",str(source)).returncode,2)
             result=self.run_cli("--file",str(source),"--output",str(output))
             self.assertEqual(result.returncode,0,result.stderr)
-            self.assertEqual(Document(output).paragraphs[0].text,"One — two")
+            self.assertEqual(Document(output).paragraphs[0].text,"One—two")
             self.assertEqual(Document(source).paragraphs[0].text,"One -- two")
             self.assertEqual(self.run_cli("--file",str(output),"--check").returncode,0)
 
