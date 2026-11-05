@@ -1,84 +1,75 @@
-# EmDashify — two hyphens, one em dash
+# EmDashify — `--` → `—`
 
-**Type `--`. Get `—`. No AI required.**
+**Probably the most unnecessary Python library you'll use more than you expect.**
 
-The em dash (`—`, U+2014) has become surprisingly visible in the age of LLMs. ChatGPT and other language models use it frequently; [Pew Research Center found](https://www.pewresearch.org/data-labs/2026/08/20/how-much-of-the-internet-is-written-with-ai/) that em dashes appeared about twice as often in the web text it studied as in 2023. The symbol is much older than AI, though — **using one does not mean a text was AI-generated**.
+Two hyphens. One em dash. Zero AI.
 
-Here is the actual problem: **most QWERTY keyboards have a `-` key, but no dedicated `—` key.** Operating-system shortcuts exist, but they vary and are awkward to remember when you just want to write.
+## Why does this exist?
 
-**EmDashify lets you write two ordinary hyphens and convert them into a proper em dash** in Python, your terminal, or a document. No model, no automatic rewriting, no runtime dependencies.
+The em dash (`—`) has become the punctuation celebrity of the LLM era. ChatGPT and other language models use it often, and [Pew Research Center](https://www.pewresearch.org/data-labs/2026/08/20/how-much-of-the-internet-is-written-with-ai/) found that em dashes appeared roughly twice as often in the web text it studied as they did in 2023. But the em dash existed long before AI, and **using one does not prove a text was AI-generated**.
+
+Meanwhile, most QWERTY keyboards have a `-` key but **no dedicated `—` key**. You can use an operating-system shortcut, but it differs across systems and is easy to forget.
+
+**EmDashify solves the small, practical part:** write `--` in your text, then convert it to `—` from Python, your terminal, or a file. No language model, no runtime dependencies, and no keyboard monitoring.
 
 ## Install
-
-After the first PyPI release:
 
 ```bash
 pip install emdashify
 ```
 
-Until then, install from the repository for development:
+Requires Python 3.10+. Until the first PyPI release, install it from a local checkout with `python -m pip install -e .`.
 
-```bash
-git clone https://github.com/edujbarrios/EmDashify.git
-cd EmDashify
-python -m pip install -e .
-```
-
-Requires Python 3.10 or later.
-
-## Use it
+## Usage
 
 **Python**
 
 ```python
 from emdashify import convert
 
-convert("Writing -- without hunting for a symbol")
-# 'Writing — without hunting for a symbol'
-
-convert("word--word", compact=True)
-# 'word—word'
+convert("Hello -- world")            # 'Hello — world'
+convert("hello--world", compact=True) # 'hello—world'
 ```
 
 **Terminal**
 
 ```bash
-emdashify "Writing -- without hunting for a symbol"
-# Writing — without hunting for a symbol
+emdashify "Hello -- world"
+# Hello — world
 
 printf 'Hello -- world\n' | emdashify
 # Hello — world
 ```
 
-**Files** (the original is never overwritten implicitly)
+**Markdown and text files**
 
 ```bash
-emdashify --file README.md --diff
+emdashify --file notes.md --diff
 emdashify --file notes.md --output notes-fixed.md
 emdashify --file notes.md --check
 ```
 
-`--check` exits with `1` if changes are needed, otherwise `0`. In Python, `check(text)` and `convert_file(path, output=...)` are also available.
+The original file is never overwritten implicitly. `--check` returns exit code `1` if any changes are needed and `0` otherwise. Python also exposes `check(text)` and `convert_file(path, output=...)`.
 
-## Predictable by design
+## Small by design, careful by default
 
-By default, EmDashify only replaces **standalone `--` markers** (separated by whitespace or at the start/end of text). It leaves `--help`, `---`, dates, single hyphens, and hyphenated words unchanged. `--compact` / `compact=True` additionally converts `word--word` when both sides are letters.
+By default, only **standalone `--` markers** become `—` (between whitespace or at text boundaries). EmDashify does not change `--help`, `---`, dates such as `2026-11-05`, single hyphens, or hyphenated words. The optional `--compact` flag (or `compact=True`) also converts `word--word` between letters.
 
-For `.md` files, it also avoids changing fenced code blocks, indented code, and inline backtick spans. This is a lightweight Markdown safeguard, not a complete parser or a grammar checker. EmDashify **does not intercept keystrokes**: you explicitly run it on text you choose.
+When reading Markdown files, EmDashify protects inline code, fenced code blocks, and indented code blocks. This is a lightweight safeguard, not a full Markdown parser. It does **not** automatically replace keystrokes as you type: you choose when to run it.
 
-## Development
+## Development and release
 
 ```bash
 python -m pip install -e .
 python -m unittest discover -s tests -v
 ```
 
-For packaging and release instructions, see [RELEASING.md](https://github.com/edujbarrios/EmDashify/blob/main/docs/RELEASING.md).
+The release process is documented in [docs/RELEASING.md](docs/RELEASING.md).
 
 ## License and attribution
 
-[BSD-3-Clause-Attribution](LICENSE). You may use, modify, and redistribute EmDashify under its terms. Redistributions must preserve the license notices **and** this acknowledgment:
+Licensed under [BSD-3-Clause-Attribution](LICENSE). Redistribution requires retaining the license notices and this acknowledgment:
 
 > This product includes software developed by edujbarrios (https://github.com/edujbarrios/EmDashify).
 
-Private use without redistribution does not require publicly displaying credit.
+Private use without redistribution does not require public attribution.
