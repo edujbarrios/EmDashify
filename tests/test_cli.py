@@ -142,7 +142,7 @@ class CLITests(unittest.TestCase):
             self.assertEqual(self.run_cli("--file",str(source)).returncode,2)
             result=self.run_cli("--file",str(source),"--output",str(output))
             self.assertEqual(result.returncode,0,result.stderr)
-            self.assertEqual(Document(output).paragraphs[0].text,"One — two")
+            self.assertEqual(Document(output).paragraphs[0].text,"One—two")
             self.assertEqual(Document(source).paragraphs[0].text,"One -- two")
             self.assertEqual(self.run_cli("--file",str(output),"--check").returncode,0)
 
