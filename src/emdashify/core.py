@@ -1,4 +1,4 @@
-"""Text conversion with a conservative default and Markdown-aware mode."""
+"""Text conversion with a compact default and Markdown-aware mode."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ EM_DASH = "\u2014"
 
 # Only standalone double hyphens, not CLI flags, URLs, dates, or triple hyphens.
 _STANDALONE = re.compile(r"(?<!\S)--(?!\S)")
-# Opt-in: also accept two hyphens between alphabetic words (e.g. "hello--world").
+# Compact mode also accepts two hyphens between alphabetic words (e.g. "hello--world").
 _BETWEEN_LETTERS = re.compile(r"(?<=[^\W\d_])--(?=[^\W\d_])")
 _BACKTICK_RUN = re.compile(r"`+")
 _FENCE = re.compile(r"^ {0,3}(?P<marker>`{3,}|~{3,})(?P<info>[^\r\n]*)")
