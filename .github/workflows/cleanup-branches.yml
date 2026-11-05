@@ -10,7 +10,7 @@ permissions: {}
 
 jobs:
   prune:
-    if: ${{ startsWith(github.event.head_commit.message, 'chore: clean public repository') }}
+    if: "${{ startsWith(github.event.head_commit.message, 'chore: clean public repository') }}"
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -18,7 +18,6 @@ jobs:
       - name: Delete only the enumerated obsolete branches
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           python - <<'PY'
           import os
