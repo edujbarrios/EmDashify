@@ -3,16 +3,14 @@ name: Publish to PyPI
 on:
   release:
     types: [published]
-  # One-time 0.2.0 publishing trigger; remove after a successful upload.
-  create:
 
 permissions: {}
 
 jobs:
   build:
-    # Only real releases or the single approved temporary v0.2.0 branch.
-    # v0.1.0 is immutable and must not be uploaded again.
-    if: ${{ (github.event_name == 'release' && github.event.release.tag_name != 'v0.1.0') || (github.event_name == 'create' && github.event.ref_type == 'branch' && github.event.ref == 'publish/v0.2.0') }}
+    # Earlier versions were already uploaded through one-time branch triggers.
+    # PyPI distribution filenames are immutable: do not upload them twice.
+    if: ${{ github.event.release.tag_name != 'v0.1.0' && github.event.release.tag_name != 'v0.2.0' }}
     name: Test and build distributions
     runs-on: ubuntu-latest
     permissions:
@@ -30,7 +28,7 @@ jobs:
           python -m unittest discover -s tests -v
       - name: Verify release tag matches package version
         env:
-          RELEASE_TAG: ${{ github.event_name == 'create' && github.event.ref || github.event.release.tag_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
           python - <<'PY'
           import os
@@ -39,7 +37,7 @@ jobs:
           from emdashify import __version__
           project = tomllib.loads(Path('pyproject.toml').read_text(encoding='utf-8'))
           version = project['project']['version']
-          tag = os.environ['RELEASE_TAG'].removeprefix('publish/')
+          tag = os.environ['RELEASE_TAG']
           assert tag == f'v{version}', f'Tag {tag!r} does not match v{version}'
           assert version == __version__, 'pyproject.toml and package __version__ differ'
           PY
