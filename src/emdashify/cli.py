@@ -9,6 +9,7 @@ from pathlib import Path
 
 from . import __version__
 from .core import convert
+from .word import convert_docx, check_docx
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -18,8 +19,8 @@ def _parser() -> argparse.ArgumentParser:
         epilog="Use --file for documents. Files are never changed unless --output is supplied.",
     )
     parser.add_argument("text", nargs="?", help="Text to convert; read standard input if omitted")
-    parser.add_argument("--file", type=Path, metavar="PATH", help="Read a UTF-8 file")
-    parser.add_argument("--output", type=Path, metavar="PATH", help="Write converted text to a file")
+    parser.add_argument("--file", type=Path, metavar="PATH", help="Read a UTF-8 text, Markdown, or Word .docx file")
+    parser.add_argument("--output", type=Path, metavar="PATH", help="Write converted text or Word document to a new file")
     parser.add_argument(
         "--compact", action="store_true", help="Also convert word--word (letters on each side)"
     )
@@ -46,6 +47,27 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--diff cannot be combined with --output")
     if args.file is None and args.text is None and sys.stdin.isatty():
         parser.error("provide text, --file, or input via standard input")
+
+    if args.file is not None and args.file.suffix.lower() == ".docx":
+        if args.markdown or args.plain:
+            parser.error("--markdown and --plain are for text files, not Word documents")
+        if args.diff:
+            parser.error("--diff is not supported for Word documents; use --check")
+        if not args.check and args.output is None:
+            parser.error("Word documents require --output (or use --check)")
+        try:
+            if args.check:
+                changed = check_docx(args.file, compact=args.compact)
+                print(
+                    f"{args.file}: {'changes needed' if changed else 'no changes needed'}",
+                    file=sys.stderr,
+                )
+                return 1 if changed else 0
+            convert_docx(args.file, args.output, compact=args.compact)
+        except (OSError, ValueError, RuntimeError) as exc:
+            parser.exit(2, f"emdashify: {exc}\n")
+        print(f"Written to {args.output}", file=sys.stderr)
+        return 0
 
     if args.file is not None:
         try:
