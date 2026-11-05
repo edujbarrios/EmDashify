@@ -10,6 +10,9 @@ permissions: {}
 
 jobs:
   build:
+    # Only real releases or the single approved temporary v0.2.0 branch.
+    # v0.1.0 is immutable and must not be uploaded again.
+    if: ${{ (github.event_name == 'release' && github.event.release.tag_name != 'v0.1.0') || (github.event_name == 'create' && github.event.ref_type == 'branch' && github.event.ref == 'publish/v0.2.0') }}
     name: Test and build distributions
     runs-on: ubuntu-latest
     permissions:
