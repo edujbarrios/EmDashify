@@ -8,6 +8,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from emdashify import __version__
+
 
 class CLITests(unittest.TestCase):
     @staticmethod
@@ -105,7 +107,7 @@ class CLITests(unittest.TestCase):
 
     def test_version(self) -> None:
         result = self.run_cli("--version")
-        self.assertEqual(result.stdout, "emdashify 0.2.0\n")
+        self.assertEqual(result.stdout, f"emdashify {__version__}\n")
 
     def test_positional_disallows_file(self) -> None:
         result = self.run_cli("hello", "--file", "ignored.md")
