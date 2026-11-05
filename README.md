@@ -18,14 +18,15 @@ Yet most QWERTY keyboards have a `-` key, **not a dedicated `—` key**. EmDashi
 ```bash
 pip install emdashify
 emdashify "Hello -- world"
-# Hello — world
+# Hello—world
 ```
 
 ```python
 from emdashify import convert
 
-convert("Hello -- world")             # 'Hello — world'
-convert("hello--world", compact=True) # 'hello—world'
+convert("Hello -- world")                  # 'Hello—world'
+convert("hello--world")                    # 'hello—world'
+convert("Hello -- world", compact=False)   # 'Hello — world'
 ```
 
 ## Word documents (.docx)
@@ -54,7 +55,7 @@ emdashify --file notes.md --output notes-fixed.md
 emdashify --file notes.md --check
 ```
 
-**Safe by default:** only standalone `--` becomes `—`. Flags (`--help`), dates, and `---` stay unchanged; Markdown code blocks are protected. Use `--compact` for `word--word`.
+**Compact by default:** both `word--word` and `word -- word` become `word—word`. Flags (`--help`), dates, and `---` stay unchanged; Markdown code blocks are protected. Use `--spaced` in the CLI (or `compact=False` in Python) to retain the former spaced style.
 
 Requires Python 3.10+. For development or publishing, see [release instructions](https://github.com/edujbarrios/EmDashify/blob/main/docs/RELEASING.md).
 
