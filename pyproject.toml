@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "emdashify"
 version = "0.1.0"
-description = "Turn two hyphens into an em dash. Safely, predictably, and without AI."
+description = "Convert double hyphens into em dashes in Python, the terminal, and Markdown. No AI required."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "BSD-3-Clause-Attribution"
