@@ -9,7 +9,7 @@ from pathlib import Path
 import re
 from typing import Any
 
-from .core import EM_DASH, _BETWEEN_LETTERS, _STANDALONE
+from .core import EM_DASH, _conversion_spans
 
 _W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
 _SPACE = "{http://www.w3.org/XML/1998/namespace}space"
@@ -52,10 +52,8 @@ def _convert_nodes(nodes: list[Any], compact: bool) -> int:
     original = "".join(node.text or "" for node in nodes)
     if "--" not in original:
         return 0
-    matches = list(_STANDALONE.finditer(original))
-    if compact:
-        matches.extend(_BETWEEN_LETTERS.finditer(original))
-    if not matches:
+    spans = _conversion_spans(original, compact)
+    if not spans:
         return 0
     ends: list[int] = []
     chars: list[list[str]] = []
@@ -65,20 +63,18 @@ def _convert_nodes(nodes: list[Any], compact: bool) -> int:
         length += len(value)
         ends.append(length)
         chars.append(list(value))
-    for match in matches:
-        first, second = match.start(), match.start() + 1
-        i, j = bisect_right(ends, first), bisect_right(ends, second)
-        offset_i = first - (ends[i - 1] if i else 0)
-        offset_j = second - (ends[j - 1] if j else 0)
-        chars[i][offset_i] = EM_DASH
-        chars[j][offset_j] = ""
+    for start, end, dash_position in spans:
+        for position in range(start, end):
+            node_index = bisect_right(ends, position)
+            offset = position - (ends[node_index - 1] if node_index else 0)
+            chars[node_index][offset] = EM_DASH if position == dash_position else ""
     for node, value in zip(nodes, chars):
         updated = "".join(value)
         if updated != (node.text or ""):
             node.text = updated
             if updated[:1].isspace() or updated[-1:].isspace():
                 node.set(_SPACE, "preserve")
-    return len(matches)
+    return len(spans)
 
 
 def _convert_xml(root: Any, compact: bool) -> int:
@@ -115,7 +111,7 @@ def _process(path: Path, output: Path | None, compact: bool) -> int:
     return count
 
 
-def convert_docx(path: str | Path, output: str | Path, *, compact: bool = False) -> Path:
+def convert_docx(path: str | Path, output: str | Path, *, compact: bool = True) -> Path:
     """Convert a complete Word document to a new .docx, preserving formatting.
 
     Covers body paragraphs, tables, headers/footers, textboxes, and supported
@@ -127,6 +123,6 @@ def convert_docx(path: str | Path, output: str | Path, *, compact: bool = False)
     return destination
 
 
-def check_docx(path: str | Path, *, compact: bool = False) -> bool:
+def check_docx(path: str | Path, *, compact: bool = True) -> bool:
     """Report whether a .docx contains convertible markers, without saving."""
     return _process(Path(path), None, compact) > 0
