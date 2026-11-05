@@ -3,14 +3,14 @@ name: Publish to PyPI
 on:
   release:
     types: [published]
-  # One-time publishing trigger for v0.2.1, removed after successful upload.
+  # One-time publishing trigger for v0.3.0, removed after successful upload.
   create:
 
 permissions: {}
 
 jobs:
   build:
-    if: ${{ github.event_name == 'create' && github.event.ref_type == 'branch' && github.event.ref == 'publish/v0.2.1' || github.event_name == 'release' && github.event.release.tag_name != 'v0.1.0' && github.event.release.tag_name != 'v0.2.0' }}
+    if: ${{ github.event_name == 'create' && github.event.ref_type == 'branch' && github.event.ref == 'publish/v0.3.0' || github.event_name == 'release' && github.event.release.tag_name != 'v0.1.0' && github.event.release.tag_name != 'v0.2.0' && github.event.release.tag_name != 'v0.2.1' }}
     # Earlier versions were already uploaded through one-time branch triggers.
     # PyPI distribution filenames are immutable: do not upload them twice.
     name: Test and build distributions
@@ -49,7 +49,7 @@ jobs:
           python -m build
           python -m twine check --strict dist/*
           python -m pip install --force-reinstall --no-deps dist/*.whl
-          python -c 'from emdashify import convert; assert convert("Hello -- world") == "Hello — world"'
+          python -c 'from emdashify import convert; assert convert("Hello -- world") == "Hello—world"'
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: python-package-distributions
