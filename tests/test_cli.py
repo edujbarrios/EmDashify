@@ -105,13 +105,34 @@ class CLITests(unittest.TestCase):
 
     def test_version(self) -> None:
         result = self.run_cli("--version")
-        self.assertEqual(result.stdout, "emdashify 0.1.0\n")
+        self.assertEqual(result.stdout, "emdashify 0.2.0\n")
 
     def test_positional_disallows_file(self) -> None:
         result = self.run_cli("hello", "--file", "ignored.md")
         self.assertEqual(result.returncode, 2)
         self.assertIn("either text or --file", result.stderr)
 
+
+    def test_docx_cli(self) -> None:
+        try:
+            from docx import Document
+        except ImportError:
+            self.skipTest("Install word extra for document integration")
+        with tempfile.TemporaryDirectory() as root:
+            source, output = Path(root,"a.docx"),Path(root,"b.docx")
+            doc=Document();doc.add_paragraph("One -- two");doc.save(source)
+            self.assertEqual(self.run_cli("--file",str(source),"--check").returncode,1)
+            self.assertEqual(self.run_cli("--file",str(source)).returncode,2)
+            result=self.run_cli("--file",str(source),"--output",str(output))
+            self.assertEqual(result.returncode,0,result.stderr)
+            self.assertEqual(Document(output).paragraphs[0].text,"One — two")
+            self.assertEqual(Document(source).paragraphs[0].text,"One -- two")
+            self.assertEqual(self.run_cli("--file",str(output),"--check").returncode,0)
+
+    def test_docx_cli_rejects_diff(self) -> None:
+        result=self.run_cli("--file","whatever.docx","--diff")
+        self.assertEqual(result.returncode,2)
+        self.assertIn("not supported",result.stderr)
 
 if __name__ == "__main__":
     unittest.main()

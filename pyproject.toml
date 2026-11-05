@@ -4,14 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "emdashify"
-version = "0.1.0"
-description = "Convert double hyphens into em dashes in Python, the terminal, and Markdown. No AI required."
+version = "0.2.0"
+description = "Convert double hyphens into em dashes in Python, Markdown, and Word documents. No AI required."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "BSD-3-Clause-Attribution"
 license-files = ["LICENSE"]
 authors = [{ name = "edujbarrios" }]
-keywords = ["em dash", "typography", "text", "markdown", "cli", "unicode", "ai writing"]
+keywords = ["em dash", "typography", "text", "markdown", "cli", "unicode", "ai writing", "word document", "docx"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: Console",
@@ -26,6 +26,9 @@ classifiers = [
     "Topic :: Text Processing :: Markup :: Markdown",
     "Topic :: Utilities",
 ]
+
+[project.optional-dependencies]
+word = ["python-docx>=1.2.0,<2"]
 
 [project.urls]
 Homepage = "https://github.com/edujbarrios/EmDashify"

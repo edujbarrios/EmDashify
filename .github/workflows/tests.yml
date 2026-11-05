@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install editable package
-        run: python -m pip install -e .
+        run: python -m pip install -e ".[word]"
       - name: Run tests
         run: python -m unittest discover -s tests -v
       - name: Verify entry point
@@ -39,7 +39,8 @@ jobs:
           python -m pip install --upgrade build twine
           python -m build
           python -m twine check --strict dist/*
-      - name: Smoke test packaged wheel
+      - name: Smoke test packaged wheel and optional extra
         run: |
+          python -m pip install ".[word]"
           python -m pip install --force-reinstall --no-deps dist/*.whl
-          python -c 'from emdashify import convert; assert convert("Hello -- world") == "Hello — world"'
+          python -c 'from emdashify import convert, convert_docx, check_docx; assert convert("Hello -- world") == "Hello — world"'
