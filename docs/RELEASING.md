@@ -1,52 +1,40 @@
-# Releasing EmDashify to PyPI
+# Publishing EmDashify to PyPI
 
-EmDashify publishes through GitHub Actions using PyPI **Trusted Publishing** (OIDC). No long-lived PyPI API tokens or passwords are stored in GitHub.
+EmDashify is published using GitHub Actions and PyPI **Trusted Publishing (OIDC)**. No long-lived PyPI token is stored in the repository.
 
-## One-time setup (before the first release)
+## Published versions
 
-1. Create a [PyPI account](https://pypi.org/account/register/) and enable two-factor authentication.
-2. Open [PyPI → Account → Publishing](https://pypi.org/manage/account/publishing/) and add a **pending trusted publisher** for a new project. Enter:
+- [v0.1.0](https://pypi.org/project/emdashify/0.1.0/) — initial release.
+- [v0.2.0](https://pypi.org/project/emdashify/0.2.0/) — Word `.docx` support, published November 5, 2026. [Successful GitHub workflow](https://github.com/edujbarrios/EmDashify/actions/runs/42022832898).
 
-   | Field | Value |
-   | --- | --- |
-   | PyPI project name | `emdashify` |
-   | GitHub owner | `edujbarrios` |
-   | Repository | `EmDashify` |
-   | Workflow filename | `release.yml` |
-   | Environment name | **Leave blank** (this workflow does not use a GitHub environment) |
+Both versions were uploaded using a one-time branch-created workflow because the connected GitHub integration could not create GitHub Releases. Those temporary triggers have been **removed**. The workflow skips retrospective releases tagged `v0.1.0` or `v0.2.0` to prevent duplicate uploads.
 
-3. A pending publisher **does not reserve** the name. Confirm that `emdashify` is available on PyPI before publishing.
-4. Review `.github/workflows/release.yml` and repository permissions. Only trusted maintainers should be able to create releases or modify the release workflow.
+## Publishing future versions
 
-**Optional hardening:** If your GitHub plan supports environments for a private repository, add an environment named `pypi` to the publish job and to the PyPI Trusted Publisher configuration. Configure allowed deployment tags and, if supported, required reviewers. Keep both values identical. Some GitHub plans do not support environments or required reviewers for private repositories; the default workflow does not depend on them.
-
-## Publish a release
-
-1. Update the version in **both** `pyproject.toml` (`[project].version`) and `src/emdashify/__init__.py` (`__version__`).
-2. Update `CHANGELOG.md`, run the tests, and merge changes into `main`.
-3. Build and validate locally, if desired:
+1. Increment the version in both `pyproject.toml` and `src/emdashify/__init__.py`, e.g. `0.2.1`. Do not reuse an existing PyPI version.
+2. Update `CHANGELOG.md`, run tests, and merge the changes into `main`.
+3. Optionally validate locally:
 
    ```bash
    python -m pip install --upgrade build twine
    python -m build
-   python -m twine check dist/*
+   python -m twine check --strict dist/*
    ```
 
-4. Open **GitHub → Releases → Draft a new release**. Create a tag **`vX.Y.Z`** from `main` (for example, `v0.1.0`), give the release a title, and click **Publish release**.
-5. The `release.yml` workflow verifies the version, runs tests, builds and checks the wheel and source distribution, and submits them to PyPI using Trusted Publishing.
-6. Verify `https://pypi.org/project/emdashify/` and install from PyPI:
+4. Open [GitHub Releases](https://github.com/edujbarrios/EmDashify/releases/new), create the matching tag (e.g. `v0.2.1`) from `main`, and **Publish release**.
+5. `.github/workflows/release.yml` builds, tests, checks the version, and publishes to PyPI through the existing Trusted Publisher.
+6. Verify both the [PyPI project page](https://pypi.org/project/emdashify/) and the [GitHub Actions run](https://github.com/edujbarrios/EmDashify/actions). For Word support, install `pip install "emdashify[word]"`.
 
-   ```bash
-   python -m pip install emdashify
-   emdashify "Hello -- world"
-   ```
+## Trusted Publisher configuration
 
-## Safety notes
+| PyPI setting | Value |
+| --- | --- |
+| Project | `emdashify` |
+| GitHub owner | `edujbarrios` |
+| Repository | `EmDashify` |
+| Workflow filename | `release.yml` |
+| Environment | Blank (the publishing job has no environment) |
 
-- **Publishing a GitHub Release triggers a real PyPI upload.** Do not click Publish release until the PyPI Trusted Publisher is configured and you intend to release.
-- A PyPI version cannot be re-uploaded with the same distribution filenames. Increase the version for subsequent releases.
-- The tag must match the version in `pyproject.toml`; the workflow fails before publishing if it does not.
-- There is no automatic PyPI release on ordinary pushes or pull requests.
-- If `emdashify` is unavailable on PyPI, pick another distribution name and update `pyproject.toml`, the project URLs where needed, and the pending Trusted Publisher.
+Keep release and workflow edit permissions limited to maintainers. A package uploaded to **PyPI is public**, even when the GitHub source repository is private.
 
-References: [PyPI Trusted Publishers](https://docs.pypi.org/trusted-publishers/), [Python Packaging Guide](https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/).
+References: [PyPI Trusted Publishers](https://docs.pypi.org/trusted-publishers/) · [Python Packaging Guide](https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/).
