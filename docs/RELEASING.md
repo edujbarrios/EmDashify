@@ -6,7 +6,7 @@ EmDashify releases are published to [PyPI](https://pypi.org/project/emdashify/) 
 
 ## New releases
 
-1. Update the version in both `pyproject.toml` and `src/emdashify/__init__.py`; never reuse a published version.
+1. Update the version in both `pyproject.toml` and `src/emdashify/__init__.py`, and update the version shown in `assets/badges/pypi.svg`. The badge is self-hosted to avoid third-party image failures. Never reuse a published version.
 2. Add release notes to `CHANGELOG.md` and merge changes into `main` after CI passes.
 3. Create a [GitHub Release](https://github.com/edujbarrios/EmDashify/releases/new) tagged `vX.Y.Z` from `main`, with the tag matching the package version.
 4. Publishing the release starts `.github/workflows/release.yml`, which tests, builds, validates, and uploads the distribution to PyPI through OIDC.
