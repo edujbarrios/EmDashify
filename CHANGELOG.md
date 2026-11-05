@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented here.
 
-## [0.1.0] - Unreleased
+## [0.1.0] - 2026-11-05
 
 - Initial release for Python 3.10+ with zero runtime dependencies.
 - Convert explicit standalone `--` markers into Unicode em dashes (`—`).
