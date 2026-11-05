@@ -3,14 +3,13 @@ name: Publish to PyPI
 on:
   release:
     types: [published]
+  # One-time 0.2.0 publishing trigger; remove after a successful upload.
+  create:
 
 permissions: {}
 
 jobs:
   build:
-    # v0.1.0 has already been uploaded to PyPI via the one-time branch trigger.
-    # Never attempt to upload that immutable version again.
-    if: ${{ github.event.release.tag_name != 'v0.1.0' }}
     name: Test and build distributions
     runs-on: ubuntu-latest
     permissions:
@@ -24,11 +23,11 @@ jobs:
           python-version: "3.13"
       - name: Run tests
         run: |
-          python -m pip install --no-deps -e .
+          python -m pip install -e ".[word]"
           python -m unittest discover -s tests -v
       - name: Verify release tag matches package version
         env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_TAG: ${{ github.event_name == 'create' && github.event.ref || github.event.release.tag_name }}
         run: |
           python - <<'PY'
           import os
@@ -37,7 +36,7 @@ jobs:
           from emdashify import __version__
           project = tomllib.loads(Path('pyproject.toml').read_text(encoding='utf-8'))
           version = project['project']['version']
-          tag = os.environ['RELEASE_TAG']
+          tag = os.environ['RELEASE_TAG'].removeprefix('publish/')
           assert tag == f'v{version}', f'Tag {tag!r} does not match v{version}'
           assert version == __version__, 'pyproject.toml and package __version__ differ'
           PY
@@ -45,7 +44,7 @@ jobs:
         run: |
           python -m pip install --upgrade build twine
           python -m build
-          python -m twine check dist/*
+          python -m twine check --strict dist/*
           python -m pip install --force-reinstall --no-deps dist/*.whl
           python -c 'from emdashify import convert; assert convert("Hello -- world") == "Hello — world"'
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
