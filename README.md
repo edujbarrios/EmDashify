@@ -29,6 +29,23 @@ convert("hello--world")                    # 'hello—world'
 convert("Hello -- world", compact=False)   # 'Hello — world'
 ```
 
+## Edit files in place (with a backup)
+
+Prefer updating the file directly? Add `--in-place` to convert it **safely**, keeping the unmodified original as a `.bak` file:
+
+```bash
+emdashify --file notes.md --in-place     # saves notes.md.bak
+emdashify --file draft.docx --in-place   # saves draft.docx.bak (requires [word])
+```
+
+```python
+from emdashify import convert_in_place
+
+convert_in_place("notes.md")  # True if changed, False if already clean
+```
+
+Existing backups are never overwritten. No backup is created if the document is already clean. Symlinks are not edited in place, and writing a file over itself with `--output` is rejected.
+
 ## Word documents (.docx)
 
 Convert an entire Word document, including paragraphs, tables, headers and footers, **without flattening text formatting**. Install the optional Word extra:
@@ -45,7 +62,7 @@ from emdashify import convert_docx
 convert_docx("draft.docx", "draft-fixed.docx")
 ```
 
-The original file is never overwritten. Word support is for `.docx`, **not legacy `.doc`**. Review complex documents with tracked changes or advanced Word fields after conversion.
+By default, the source file is untouched; use `--in-place` for an explicit backup-protected update. Word support is for `.docx`, **not legacy `.doc`**. Review complex documents with tracked changes or advanced Word fields after conversion.
 
 ## Text and Markdown files
 
