@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented here.
 
+## [0.4.0] - 2026-11-06
+
+- Add opt-in `--in-place` CLI editing for text, Markdown, and Word documents.
+- Save the original file as a `.bak` backup, without overwriting existing backups.
+- Add `convert_in_place(path)` to the Python API.
+- Use a temporary file and atomic replacement to avoid truncating source files on failed conversion.
+- Reject `--output` when it points to the input file; reject symlink in-place edits.
+- Add regression tests for backups, collisions, file permissions, and Word formatting.
+
 ## [0.3.0] - 2026-11-05
 
 - Make compact em dash typography the default: `word--word` and `word -- word` produce `word—word`.

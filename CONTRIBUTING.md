@@ -12,3 +12,5 @@ python -m unittest discover -s tests -v
 For any behavior change, add tests covering ordinary prose, CLI flags or code examples, Unicode, and Markdown where relevant. The default mode should remain conservative. A new rule that may alter commands or source code must be opt-in and clearly documented.
 
 Do not add mandatory runtime dependencies without a strong justification.
+
+In-place file editing must remain opt-in, leave an unmodified backup, and reject overwriting existing backups. Include regression tests for failure paths and Word document formatting.

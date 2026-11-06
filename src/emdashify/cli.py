@@ -9,6 +9,7 @@ from pathlib import Path
 
 from . import __version__
 from .core import convert
+from .inplace import convert_in_place
 from .word import convert_docx, check_docx
 
 
@@ -16,11 +17,12 @@ def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="emdashify",
         description="Convert explicit -- markers to an em dash (—).",
-        epilog="Use --file for documents. Files are never changed unless --output is supplied.",
+        epilog="Use --file for documents. --in-place creates a .bak backup before changing a file.",
     )
     parser.add_argument("text", nargs="?", help="Text to convert; read standard input if omitted")
     parser.add_argument("--file", type=Path, metavar="PATH", help="Read a UTF-8 text, Markdown, or Word .docx file")
     parser.add_argument("--output", type=Path, metavar="PATH", help="Write converted text or Word document to a new file")
+    parser.add_argument("--in-place", action="store_true", help="Update --file safely, saving its original content in a .bak backup")
     spacing = parser.add_mutually_exclusive_group()
     spacing.add_argument(
         "--compact", action="store_true", help="Use compact em dashes (the default)"
@@ -47,6 +49,14 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("provide either text or --file, not both")
     if args.output is not None and args.file is None:
         parser.error("--output requires --file")
+    if args.in_place and args.file is None:
+        parser.error("--in-place requires --file")
+    if args.in_place and args.output is not None:
+        parser.error("--in-place cannot be combined with --output")
+    if args.in_place and (args.check or args.diff):
+        parser.error("--in-place cannot be combined with --check or --diff")
+    if args.file is not None and args.output is not None and args.file.resolve() == args.output.resolve():
+        parser.error("--output must differ from --file; use --in-place for a backup")
     if args.check and args.output is not None:
         parser.error("--check cannot be combined with --output")
     if args.diff and args.output is not None:
@@ -59,9 +69,14 @@ def main(argv: list[str] | None = None) -> int:
             parser.error("--markdown and --plain are for text files, not Word documents")
         if args.diff:
             parser.error("--diff is not supported for Word documents; use --check")
-        if not args.check and args.output is None:
-            parser.error("Word documents require --output (or use --check)")
+        if not args.check and args.output is None and not args.in_place:
+            parser.error("Word documents require --output or --in-place (or use --check)")
         try:
+            if args.in_place:
+                changed = convert_in_place(args.file, compact=compact)
+                message = f"Updated {args.file} (backup: {args.file}.bak)" if changed else f"{args.file}: no changes needed"
+                print(message, file=sys.stderr)
+                return 0
             if args.check:
                 changed = check_docx(args.file, compact=compact)
                 print(
@@ -95,6 +110,15 @@ def main(argv: list[str] | None = None) -> int:
         markdown = True
     elif args.plain:
         markdown = False
+
+    if args.in_place:
+        try:
+            changed = convert_in_place(args.file, compact=compact, markdown=markdown)
+        except (OSError, UnicodeError, TypeError, ValueError, RuntimeError) as exc:
+            parser.exit(2, f"emdashify: {exc}\n")
+        message = f"Updated {args.file} (backup: {args.file}.bak)" if changed else f"{args.file}: no changes needed"
+        print(message, file=sys.stderr)
+        return 0
 
     try:
         converted = convert(original, compact=compact, markdown=markdown)
