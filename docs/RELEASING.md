@@ -2,7 +2,7 @@
 
 EmDashify releases are published to [PyPI](https://pypi.org/project/emdashify/) with [GitHub Actions](https://github.com/edujbarrios/EmDashify/actions) and PyPI **Trusted Publishing (OIDC)**. No PyPI API token is stored in the repository.
 
-**Latest release: [v0.3.0](https://pypi.org/project/emdashify/0.3.0/)** — compact em dashes by default (`Hello -- world` → `Hello—world`). [Successful publishing run](https://github.com/edujbarrios/EmDashify/actions/runs/42027453444).
+**Latest release: [v0.4.0](https://pypi.org/project/emdashify/0.4.0/)** — safe opt-in `--in-place` editing with automatic `.bak` backups for text and Word documents. [Successful publishing run](https://github.com/edujbarrios/EmDashify/actions/runs/42135988475).
 
 ## New releases
 
@@ -12,7 +12,7 @@ EmDashify releases are published to [PyPI](https://pypi.org/project/emdashify/) 
 4. Publishing the release starts `.github/workflows/release.yml`, which tests, builds, validates, and uploads the distribution to PyPI through OIDC.
 5. Check the GitHub Actions run and the new PyPI version. To test the install: `python -m pip install --upgrade "emdashify[word]"`.
 
-Versions `0.1.0`, `0.2.0`, `0.2.1`, and `0.3.0` have already been published. PyPI distribution files are immutable, so the workflow skips retrospective releases for these versions.
+Versions `0.1.0`, `0.2.0`, `0.2.1`, `0.3.0`, and `0.4.0` have already been published. PyPI distribution files are immutable, so the workflow skips retrospective releases for these versions.
 
 ## Trusted Publisher
 
