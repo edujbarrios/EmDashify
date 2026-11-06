@@ -1,6 +1,6 @@
 # EmDashify — Em Dashes Made Easy
 
-[![PyPI v0.3.0](https://raw.githubusercontent.com/edujbarrios/EmDashify/main/assets/badges/pypi.svg)](https://pypi.org/project/emdashify/)
+[![PyPI v0.4.0](https://raw.githubusercontent.com/edujbarrios/EmDashify/main/assets/badges/pypi.svg)](https://pypi.org/project/emdashify/)
 [![Python 3.10+](https://raw.githubusercontent.com/edujbarrios/EmDashify/main/assets/badges/python.svg)](https://pypi.org/project/emdashify/)
 [![Tests](https://img.shields.io/github/actions/workflow/status/edujbarrios/EmDashify/tests.yml?branch=main&label=tests&logo=githubactions)](https://github.com/edujbarrios/EmDashify/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/license-BSD--3--Clause--Attribution-blue)](https://github.com/edujbarrios/EmDashify/blob/main/LICENSE)
