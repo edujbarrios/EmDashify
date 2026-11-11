@@ -3,20 +3,27 @@ name: Tests
 on:
   push:
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   test:
-    name: Python ${{ matrix.python-version }}
-    runs-on: ubuntu-latest
+    name: Python ${{ matrix.python-version }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
       - name: Install editable package
         run: python -m pip install -e ".[word]"
       - name: Run tests
@@ -25,10 +32,8 @@ jobs:
         run: emdashify --version
 
   package:
-    name: Build and validate PyPI artifacts
+    name: Build, validate, and install PyPI artifacts
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -39,8 +44,15 @@ jobs:
           python -m pip install --upgrade build twine
           python -m build
           python -m twine check --strict dist/*
-      - name: Smoke test packaged wheel and optional extra
+      - name: Install the built wheel in a clean environment
         run: |
-          python -m pip install ".[word]"
-          python -m pip install --force-reinstall --no-deps dist/*.whl
-          python -c 'from emdashify import convert, convert_docx, check_docx; assert convert("Hello -- world") == "Hello—world"'
+          python -m venv /tmp/emdashify-smoke
+          /tmp/emdashify-smoke/bin/python -m pip install "dist/"*.whl
+          cd /tmp
+          /tmp/emdashify-smoke/bin/emdashify --version
+          /tmp/emdashify-smoke/bin/python -c 'from emdashify import convert; assert convert("Hello -- world") == "Hello—world"'
+      - name: Verify the optional Word extra from the wheel
+        run: |
+          /tmp/emdashify-smoke/bin/python -m pip install "dist/"*.whl"[word]"
+          cd /tmp
+          /tmp/emdashify-smoke/bin/python -c 'from emdashify import convert_docx, check_docx; import docx; assert callable(convert_docx) and callable(check_docx)'
