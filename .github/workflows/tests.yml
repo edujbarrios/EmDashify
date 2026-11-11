@@ -53,6 +53,6 @@ jobs:
           /tmp/emdashify-smoke/bin/python -c 'from emdashify import convert; assert convert("Hello -- world") == "Hello—world"'
       - name: Verify the optional Word extra from the wheel
         run: |
-          /tmp/emdashify-smoke/bin/python -m pip install "dist/"*.whl"[word]"
+          /tmp/emdashify-smoke/bin/python -m pip install dist/*.whl\[word\]
           cd /tmp
           /tmp/emdashify-smoke/bin/python -c 'from emdashify import convert_docx, check_docx; import docx; assert callable(convert_docx) and callable(check_docx)'
